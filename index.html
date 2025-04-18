@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Azul Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #EFE9C9;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #EFE9C9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .round {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #EFE9C9;
+    }
+
+    .round h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .items {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      background: #EFE9C9;
+    }
+
+    .item {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item img {
+      width: 80px;
+      height: 80px;
+      display: block;
+    }
+
+    button {
+      display: inline-block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #556b2f;
+      color: white;
+      border-radius: 5px;
+    }
+
+    #main-image {
+      margin-top: 10px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img id="main-image" src="main.jpg" alt="main" />
+    <div id="rounds"></div>
+    <button onclick="generateRounds()">Сгенерировать</button>
+  </div>
+
+  <script>
+    const colors = ["Blue", "Green", "Yellow", "Pink", "DarkGreen", "DarkPink"];
+    const figures = ["Derevo", "Cvetec", "Kolokolec", "Ptiza", "Babochka", "Kolos"];
+
+    function getImage(name) {
+      return `${name}.jpg`;
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function generateRounds() {
+      const roundsDiv = document.getElementById("rounds");
+      const mainImage = document.getElementById("main-image");
+      mainImage.style.display = "none";
+
+      roundsDiv.innerHTML = "";
+
+      let colorsPool = shuffle([...colors]);
+      let figuresPool = shuffle([...figures]);
+
+      const rules = [
+        { colors: 2, figures: 1 },
+        { colors: 1, figures: 2 },
+        { colors: 2, figures: 1 },
+        { colors: 1, figures: 2 },
+      ];
+
+      for (let i = 0; i < 4; i++) {
+        const rule = rules[i];
+        const selectedColors = colorsPool.splice(0, rule.colors);
+        const selectedFigures = figuresPool.splice(0, rule.figures);
+
+        let combined;
+        if (rule.colors === 1) {
+          combined = [selectedFigures[0], selectedColors[0], selectedFigures[1]];
+        } else {
+          combined = [selectedColors[0], selectedFigures[0], selectedColors[1]];
+        }
+
+        const roundDiv = document.createElement("div");
+        roundDiv.className = "round";
+        roundDiv.innerHTML = `<h2>Раунд ${i + 1}</h2>`;
+
+        const slots = combined.map(item =>
+          `<div class='item'><img src='${getImage(item)}' alt='${item}'></div>`
+        );
+
+        roundDiv.innerHTML += `<div class='items'>${slots.join('')}</div>`;
+        roundsDiv.appendChild(roundDiv);
+      }
+    }
+  </script>
+</body>
+</html>
