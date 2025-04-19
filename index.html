@@ -99,11 +99,24 @@
       return array;
     }
 
+    async function saveGenerationToGitHub(generation) {
+      try {
+        await fetch('https://azul-backend.vercel.app/api/save-generation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ newGeneration: generation })
+        });
+      } catch (error) {
+        console.error("Ошибка при сохранении генерации:", error);
+      }
+    }
+
     function generateRounds() {
       const roundsDiv = document.getElementById("rounds");
       const mainImage = document.getElementById("main-image");
       mainImage.style.display = "none";
-
       roundsDiv.innerHTML = "";
 
       let colorsPool = shuffle([...colors]);
@@ -115,6 +128,8 @@
         { colors: 2, figures: 1 },
         { colors: 1, figures: 2 },
       ];
+
+      const roundsData = [];
 
       for (let i = 0; i < 4; i++) {
         const rule = rules[i];
@@ -128,6 +143,8 @@
           combined = [selectedColors[0], selectedFigures[0], selectedColors[1]];
         }
 
+        roundsData.push(combined);
+
         const roundDiv = document.createElement("div");
         roundDiv.className = "round";
         roundDiv.innerHTML = `<h2>Раунд ${i + 1}</h2>`;
@@ -139,6 +156,9 @@
         roundDiv.innerHTML += `<div class='items'>${slots.join('')}</div>`;
         roundsDiv.appendChild(roundDiv);
       }
+
+      // Отправляем данные генерации на сервер
+      saveGenerationToGitHub(roundsData);
     }
   </script>
 </body>
