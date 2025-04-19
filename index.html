@@ -137,7 +137,7 @@
       }
     }
 
-    async function loadHistory() {
+        async function loadHistory() {
       try {
         const response = await fetch('https://azul-backend.vercel.app/api/load-history');
         const history = await response.json();
@@ -146,10 +146,14 @@
         historyDiv.innerHTML = '';
 
         if (history && history.length > 0) {
-          history.forEach((item, index) => {
+          const latest10 = history.slice(-10).reverse(); // последние 10, от новых к старым
+
+          latest10.forEach((item, index) => {
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
-            historyItem.innerHTML = `<h3>Генерация ${index + 1}</h3><pre>${JSON.stringify(item, null, 2)}</pre>`;
+            historyItem.innerHTML = `<strong>Генерация ${history.length - index}</strong>`;
+            historyItem.style.cursor = 'pointer';
+            historyItem.onclick = () => renderRoundsFromHistory(item);
             historyDiv.appendChild(historyItem);
           });
         } else {
@@ -158,6 +162,26 @@
       } catch (error) {
         console.error("Ошибка при загрузке истории:", error);
       }
+    }
+
+    function renderRoundsFromHistory(roundsData) {
+      const roundsDiv = document.getElementById("rounds");
+      const mainImage = document.getElementById("main-image");
+      mainImage.style.display = "none";
+      roundsDiv.innerHTML = "";
+
+      roundsData.forEach((combined, i) => {
+        const roundDiv = document.createElement("div");
+        roundDiv.className = "round";
+        roundDiv.innerHTML = `<h2>Раунд ${i + 1}</h2>`;
+
+        const slots = combined.map(item =>
+          `<div class='item'><img src='${getImage(item)}' alt='${item}'></div>`
+        );
+
+        roundDiv.innerHTML += `<div class='items'>${slots.join('')}</div>`;
+        roundsDiv.appendChild(roundDiv);
+      });
     }
 
     function generateRounds() {
