@@ -149,28 +149,22 @@
       const latest10 = history.slice(-10).reverse(); // последние 10, новые сверху
 
       latest10.forEach((item, index) => {
+        const generationIndex = history.length - index;
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
         historyItem.style.cursor = 'pointer';
         historyItem.onclick = () => renderRoundsFromHistory(item);
 
-        historyItem.innerHTML = `<h3>Генерация ${history.length - index}</h3>`;
+        let previewText = item.map((round, i) => {
+          const short = round.map(el => `"${el}"`).join(", ");
+          return `Раунд ${i + 1}: [${short}]`;
+        }).join("; ");
 
-        // Визуальное отображение мини-превью
-        item.forEach(row => {
-          const rowDiv = document.createElement('div');
-          rowDiv.className = 'items';
-          row.forEach(el => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item';
-            itemDiv.innerHTML = `<img src='${getImage(el)}' alt='${el}' />`;
-            rowDiv.appendChild(itemDiv);
-          });
-          historyItem.appendChild(rowDiv);
-        });
-
+        historyItem.innerHTML = `<h3>Генерация ${generationIndex}</h3><p>${previewText}</p>`;
         historyDiv.appendChild(historyItem);
       });
+
+     
     } else {
       historyDiv.innerHTML = '<p>История генераций пуста.</p>';
     }
