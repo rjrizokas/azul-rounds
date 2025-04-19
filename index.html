@@ -124,10 +124,13 @@
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ newGeneration: generation }),
-            mode: "no-cors", // Добавь эту строку
           }
         );
-        console.log("Генерация успешно сохранена:", response);
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to save generation");
+        }
+        console.log("Генерация успешно сохранена:", result);
       } catch (error) {
         console.error("Ошибка при сохранении генерации:", error);
         alert("Не удалось сохранить генерацию: " + error.message);
