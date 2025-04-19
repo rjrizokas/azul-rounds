@@ -74,6 +74,18 @@
       height: auto;
       border-radius: 8px;
     }
+
+    .history-container {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .history-item {
+      padding: 10px;
+      background: #dcdcdc;
+      border-radius: 8px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
@@ -81,7 +93,10 @@
     <img id="main-image" src="main.jpg" alt="main" />
     <div id="rounds"></div>
     <button onclick="generateRounds()">Сгенерировать</button>
+    <button onclick="loadHistory()">История генераций</button>
   </div>
+
+  <div id="history" class="history-container"></div>
 
   <script>
     const colors = ["Blue", "Green", "Yellow", "Pink", "DarkGreen", "DarkPink"];
@@ -110,6 +125,29 @@
         });
       } catch (error) {
         console.error("Ошибка при сохранении генерации:", error);
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const response = await fetch('https://azul-backend.vercel.app/api/load-history');
+        const history = await response.json();
+        
+        const historyDiv = document.getElementById('history');
+        historyDiv.innerHTML = '';
+
+        if (history && history.length > 0) {
+          history.forEach((item, index) => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `<h3>Генерация ${index + 1}</h3><pre>${JSON.stringify(item, null, 2)}</pre>`;
+            historyDiv.appendChild(historyItem);
+          });
+        } else {
+          historyDiv.innerHTML = '<p>История генераций пуста.</p>';
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке истории:", error);
       }
     }
 
