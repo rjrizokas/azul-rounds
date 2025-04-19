@@ -116,15 +116,21 @@
 
     async function saveGenerationToGitHub(generation) {
       try {
-        await fetch('https://azul-backend.vercel.app/api/save-generation', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ newGeneration: generation })
-        });
+        const response = await fetch(
+          "https://azul-backend.vercel.app/api/save-generation",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newGeneration: generation }),
+            mode: "no-cors", // Добавь эту строку
+          }
+        );
+        console.log("Генерация успешно сохранена:", response);
       } catch (error) {
         console.error("Ошибка при сохранении генерации:", error);
+        alert("Не удалось сохранить генерацию: " + error.message);
       }
     }
 
