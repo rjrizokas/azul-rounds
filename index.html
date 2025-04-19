@@ -78,6 +78,9 @@
     .history-container {
       margin-top: 20px;
       text-align: left;
+      max-width: 500px; /* как .container */
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .history-item {
@@ -149,12 +152,14 @@ async function loadHistory() {
       const latest10 = history.slice(-10).reverse(); // последние 10, новые сверху
 
       latest10.forEach((item, index) => {
+        const generationIndex = index + 1; // Теперь ГЕНЕРАЦИЯ 1 = последняя
+
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
         historyItem.style.cursor = 'pointer';
         historyItem.onclick = () => renderRoundsFromHistory(item);
 
-        historyItem.innerHTML = `<h3>Генерация ${history.length - index}</h3>`;
+        historyItem.innerHTML = `<h3 style="text-align:center;">Генерация ${generationIndex}</h3>`;
 
         // Визуальное отображение мини-превью
         item.forEach(row => {
@@ -178,6 +183,7 @@ async function loadHistory() {
     console.error("Ошибка при загрузке истории:", error);
   }
 }
+
 
 function renderRoundsFromHistory(roundsData) {
   const roundsDiv = document.getElementById("rounds");
